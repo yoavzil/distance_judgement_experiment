@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div{
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        img{
+            display: block;
+        }
+        button {
+            background-color: rgb(0, 0, 255);
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 8px;
+            opacity: 0.6;
+            transition: 0.3s;
+            cursor: pointer;
+            top: 50px;
+        }
+        .button:hover {opacity: 1}
+        input[type=text] {
+            padding: 5px 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            -webkit-transition: 0.5s;
+            transition: 0.5s;
+            outline: none;
+            border-radius: 4px;
+        }
+        input[type=text]:focus {
+            border: 2px solid #555;
+        }
+        .inst{
+            display: block;
+            text-align: left;
+        }
+        .instE{
+            display: block;
+            text-align: left;
+        }
+        .error{
+            font-size: 14px;
+            display: none; 
+            color: black;
+            background-color: rgb(250, 158, 158); 
+            border-radius: 4px;
+            opacity: 0.5;
+            padding: 5px 15px;
+            border: 2px solid red;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            text-align: right;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body onload="wAndH()" style="background-color: silver;">
+    <div id="explain">
+        <label id="lngL" class="switch">
+            <input type="checkbox" checked id="lng" onclick="changeLng()">
+            <span class="slider round"></span>
+        </label>
+        <p id="en">EN</p>
+        <p id="he">עב</p>
+        <h1 id="welcome">Welcome to the distance judgments session !</h1> <br>
+        <p id="imNumT" style="font-size: 22px;">The following session includes a series of images.</p>
+        <p id="each" style="font-size: 22px;">Each image contains a red circle and a blue circle.</p>
+        <p id="r" style="color: red; font-size: 22px;">If you think the area marked by the red circle is closer to the camera: <span class = rc>press the R button</span>.</p>
+        <p id="b" style="color: blue; font-size: 22px;">If you think the area marked by the blue circle is closer to the camera: <span class = "bc">press the B button</span>.</p>
+        <p id="e" style="color: purple; font-size: 22px;">If you think the areas marked by the circles are equally distant from the camera: <span class = "e">press the E button</span>.</p>
+        <button id="nextInst" class="button" type="button" onclick="nextInst()" style="position: relative; bottom: 50px; display: none;">Next</button>
+    </div>
+    <div id="fInst" style="display: none; position: relative;">
+        <h1 id="fInstT">Further Instructions</h1>
+        <p id="corrTi" style="font-size: 22px;">Please note that distances is from the camera the picture was taken from to each of the circles as presented below, and not the horizontal distance:</p>
+        <figure>
+            <img class="img" id="corrImg" src="https://drive.google.com/uc?export=view&id=1uABPTB8DkrQvOwOLtRuegge983W5ZQU7" alt="road">
+            <figcaption style = text-align:center;></figcaption>
+        </figure>
+        <figure>
+            <img class="img" id="wrongImg" src="https://drive.google.com/uc?export=view&id=1zogUyCP0AHoT6GHoZp0vGUQKZ41YV346" alt="road">
+            <figcaption style = text-align:center;></figcaption>
+        </figure>
+        <div id="beforeTry">
+            <h3 id="before" style="font-size: 25px;">Before starting the experiment let's practice it once:</h3>
+            <button id="try" class="button" type="button" onclick="tryE()" style="position: relative; bottom: 50px;">Practice Trial</button>
+        </div>
+
+    </div>
+    <div id="tryExp" style="display: none;">
+        <h1 id="tryT">Practice Trial</h1>
+        <div id="tryInst" style="display: inline;">
+            <p class="inst" style="color: red;">red circle closer: <span class = "rc">press R</span></p>
+            <p class="inst" style="color: blue;">blue circle closer: <span class = "bc">press B</span></p>
+            <p class="inst" style="color: purple;">circles equally distant: <span class = "e">press E</span></p>
+        </div>
+        <figure>
+            <img class="img" id="imgTry" src="https://drive.google.com/uc?export=view&id=14Z76uGPYQnBC3wQkCQWhiuC85WUswFzl" alt="road" width="600" height="450">
+            <figcaption style = text-align:center;></figcaption>
+        </figure>
+        <div id="wrong" style="display: none;">
+            <h3 id="hwrong" style="color: red; font-size: 30px;">Wrong</h3>
+            <button id="again" class="button" type="button" onclick="again()" style="background-color: red;">Try again</button>
+        </div>
+        <div id="correct" style="display: none;">
+            <h3 id="corr" style="color: green; font-size: 30px;">Correct!</h3>
+            <button id="ok" class="button" type="button" onclick="ok()" style="background-color: green;">Next</button>
+        </div>
+        <div id="tryPhoneB" style="display: none;">
+            <button class="button" id="low" type="button" onclick="lowB()" style="background-color: red; display: inline;">R</button>
+            <button class="button" id="up" type="button" onclick="upB()" style="background-color: blue; display: inline;">B</button>
+            <button class="button" id="equal" type="button" onclick="equalB()" style="background-color: purple; display: inline;">E</button>
+        </div>
+    </div>
+    <div id="details" style="display: none;">
+        <h1 id="head">Details</h1>
+        <p id="pd">Please enter your personal details</p>
+        <form id="det" name="submit-to-google-sheet">
+            <label id="fnL" for="fName"><span style="color: red;">*</span>First Name:</label><br>
+            <input name="fName" type="text" id="fName" ><br><br>
+            <label id="lnL" for="lName">Last Name:</label><br>
+            <input name="lName" type="text" id="lName" ><br><br>
+            <label id="ageL" for="age">Age:</label><br>
+            <input name="age" type="text" id="age" ><br><br>
+            <label id="heightL" for="height">Height(cm):</label><br>
+            <input name="height" type="text" id="height" ><br><br>
+            <label id="gL" for="male">Gender:</label><br>
+            <input type="radio" id="male" name="gender" value="male">
+            <label id="mL" for="male">Man</label>
+            <input type="radio" id="female" name="gender" value="female">
+            <label id="fL" for="female">Woman</label><br><br>
+            <label id="hL" for="right">Handedness:</label><br>
+            <input type="radio" id="right" name="handedness" value="right">
+            <label id="rightL" for="right">Right</label>
+            <input type="radio" id="left" name="handedness" value="left">
+            <label id="leftL" for="left">Left</label><br><br>
+            <label id="correctVL" for="corrV">My near vision is normal or corrected by glasses or contacts:</label><br>
+            <input type="radio" onclick="removeExplanation()" id="corrV" name="correctVision" value="t">
+            <label id="corrVL" for="corrV">Correct</label>
+            <input type="radio" onclick="addExplanation()" id="incorrV" name="correctVision" value="f">
+            <label id="incorrVL" for="incorrV">Incorrect</label><br><br>
+            <label id="explainVL" for="explainV" style="display: none;">Explanation:</label>
+            <input name="explainV" type="text" id="explainV" style="display: none; text-align: center;"><br><br>
+            <input name="device" id="device" type="text" style="display: none;">
+            <input name="screenWidth" id="sW" type="text" style="display: none;">
+            <input name="screenHeight" id="sH" type="text" style="display: none;">
+            <div id="0">
+                <input name="screens_004_46_R_L" type="text" style="display: none;">
+                <input name="t1" type="text" style="display: none;">
+            </div>
+            <div id="1">
+                <input name="out_009_363_R_U" type="text" style="display: none;" >
+                <input name="t2" type="text" style="display: none;">
+            </div>
+            <div id="2">
+                <input name="out_010_1_B_L" type="text" style="display: none;" >
+                <input name="t3" type="text" style="display: none;">
+            </div>
+            <div id="3">
+                <input name="out_003_1109_R_U" type="text" style="display: none;" >
+                <input name="t4" type="text" style="display: none;">
+            </div>
+            <div id="4">
+                <input name="in_004_133_R_E" type="text" style="display: none;" >
+                <input name="t5" type="text" style="display: none;">
+            </div>
+            <div id="5">
+                <input name="out_007_248_B_L" type="text" style="display: none;" >
+                <input name="t6" type="text" style="display: none;">
+            </div>
+            <div id="6">
+                <input name="out_025_288_B_L" type="text" style="display: none;" >
+                <input name="t7" type="text" style="display: none;">
+            </div>
+            <div id="7">
+                <input name="out_024_81_R_E" type="text" style="display: none;" >
+                <input name="t8" type="text" style="display: none;">
+            </div>
+            <div id="8">
+                <input name="out_015_100_B_U" type="text" style="display: none;" >
+                <input name="t9" type="text" style="display: none;">
+            </div>
+            <div id="9">
+                <input name="out_014_209_R_U" type="text" style="display: none;" >
+                <input name="t10" type="text" style="display: none;">
+            </div>
+            <div id="10">
+                <input name="out_012_1_B_U" type="text" style="display: none;" >
+                <input name="t11" type="text" style="display: none;">
+            </div>
+            <div id="11">
+                <input name="out_011_651_B_L" type="text" style="display: none;" >
+                <input name="t12" type="text" style="display: none;">
+            </div>
+            <div id="12">
+                <input name="out_011_633_B_U" type="text" style="display: none;" >
+                <input name="t13" type="text" style="display: none;">
+            </div>
+            <div id="13">
+                <input name="out_011_633_B_L" type="text" style="display: none;" >
+                <input name="t14" type="text" style="display: none;">
+            </div>
+            <div id="14">
+                <input name="out_009_29_R_L" type="text" style="display: none;" >
+                <input name="t15" type="text" style="display: none;">
+            </div>
+            <div id="15">
+                <input name="out_006_328_B_U" type="text" style="display: none;" >
+                <input name="t16" type="text" style="display: none;">
+            </div>
+            <div id="16">
+                <input name="out_006_207_R_U" type="text" style="display: none;" >
+                <input name="t17" type="text" style="display: none;">
+            </div>
+            <div id="17">
+                <input name="out_006_148_B_L" type="text" style="display: none;" >
+                <input name="t18" type="text" style="display: none;">
+            </div>
+            <div id="18">
+                <input name="out_006_92_R_U" type="text" style="display: none;" >
+                <input name="t19" type="text" style="display: none;">
+            </div>
+            <div id="19">
+                <input name="out_006_89_R_U" type="text" style="display: none;" >
+                <input name="t20" type="text" style="display: none;">
+            </div>
+            <div id="20">
+                <input name="out_006_63_B_E" type="text" style="display: none;" >
+                <input name="t21" type="text" style="display: none;">
+            </div>
+            <div id="21">
+                <input name="out_006_1_R_E" type="text" style="display: none;" >
+                <input name="t22" type="text" style="display: none;">
+            </div>
+            <div id="22">
+                <input name="out_006_1_B_U" type="text" style="display: none;" >
+                <input name="t23" type="text" style="display: none;">
+            </div>
+            <div id="23">
+                <input name="out_005_438_R_L" type="text" style="display: none;" >
+                <input name="t24" type="text" style="display: none;">
+            </div>
+            <div id="24">
+                <input name="out_005_365_B_U" type="text" style="display: none;" >
+                <input name="t25" type="text" style="display: none;">
+            </div>
+            <div id="25">
+                <input name="out_005_365_B_E" type="text" style="display: none;" >
+                <input name="t26" type="text" style="display: none;">
+            </div>
+            <div id="26">
+                <input name="out_005_219_R_U" type="text" style="display: none;" >
+                <input name="t27" type="text" style="display: none;">
+            </div>
+            <div id="27">
+                <input name="out_005_74_R_L" type="text" style="display: none;" >
+                <input name="t28" type="text" style="display: none;">
+            </div>
+            <div id="28">
+                <input name="out_004_1282_R_U" type="text" style="display: none;" >
+                <input name="t29" type="text" style="display: none;">
+            </div>
+            <div id="29">
+                <input name="out_004_1094_R_E" type="text" style="display: none;" >
+                <input name="t30" type="text" style="display: none;">
+            </div>
+            <div id="30">
+                <input name="out_004_1094_B_L" type="text" style="display: none;" >
+                <input name="t31" type="text" style="display: none;">
+            </div>
+            <div id="31">
+                <input name="out_004_809_R_L" type="text" style="display: none;" >
+                <input name="t32" type="text" style="display: none;">
+            </div>
+            <div id="32">
+                <input name="out_004_809_B_U" type="text" style="display: none;" >
+                <input name="t33" type="text" style="display: none;">
+            </div>
+            <div id="33">
+                <input name="out_004_809_B_E" type="text" style="display: none;" >
+                <input name="t34" type="text" style="display: none;">
+            </div>
+            <div id="34">
+                <input name="out_004_144_B_E" type="text" style="display: none;" >
+                <input name="t35" type="text" style="display: none;">
+            </div>
+            <div id="35">
+                <input name="out_003_1129_B_U" type="text" style="display: none;" >
+                <input name="t36" type="text" style="display: none;">
+            </div>
+            <div id="36">
+                <input name="out_003_725_B_U" type="text" style="display: none;" >
+                <input name="t37" type="text" style="display: none;">
+            </div>
+            <div id="37">
+                <input name="out_003_690_R_L" type="text" style="display: none;" >
+                <input name="t38" type="text" style="display: none;">
+            </div>
+            <div id="38">
+                <input name="out_002_705_B_L" type="text" style="display: none;" >
+                <input name="t39" type="text" style="display: none;">
+            </div>
+            <div id="39">
+                <input name="out_002_469_B_L" type="text" style="display: none;" >
+                <input name="t40" type="text" style="display: none;">
+            </div>
+            <div id="40">
+                <input name="out_001_769_B_U" type="text" style="display: none;" >
+                <input name="t41" type="text" style="display: none;">
+            </div>
+            <div id="41">
+                <input name="out_001_514_R_L" type="text" style="display: none;" >
+                <input name="t42" type="text" style="display: none;">
+            </div>
+            <div id="42">
+                <input name="out_001_285_R_E" type="text" style="display: none;" >
+                <input name="t43" type="text" style="display: none;">
+            </div>
+            <div id="43">
+                <input name="in_023_315_R_E" type="text" style="display: none;" >
+                <input name="t44" type="text" style="display: none;">
+            </div>
+            <div id="44">
+                <input name="in_023_226_B_E" type="text" style="display: none;" >
+                <input name="t45" type="text" style="display: none;">
+            </div>
+            <div id="45">
+                <input name="in_023_46_R_L" type="text" style="display: none;" >
+                <input name="t46" type="text" style="display: none;">
+            </div>
+            <div id="46">
+                <input name="in_012_917_B_L" type="text" style="display: none;" >
+                <input name="t47" type="text" style="display: none;">
+            </div>
+            <div id="47">
+                <input name="in_012_284_B_U" type="text" style="display: none;" >
+                <input name="t48" type="text" style="display: none;">
+            </div>
+            <div id="48">
+                <input name="in_012_77_R_E" type="text" style="display: none;" >
+                <input name="t49" type="text" style="display: none;">
+            </div>
+            <div id="49">
+                <input name="in_008_282_R_E" type="text" style="display: none;" >
+                <input name="t50" type="text" style="display: none;">
+            </div>
+            <div id="50">
+                <input name="in_007_1_R_E" type="text" style="display: none;" >
+                <input name="t51" type="text" style="display: none;">
+            </div>
+            <div id="51">
+                <input name="in_007_1_B_L" type="text" style="display: none;" >
+                <input name="t52" type="text" style="display: none;">
+            </div>
+            <div id="52">
+                <input name="in_006_172_B_E" type="text" style="display: none;" >
+                <input name="t53" type="text" style="display: none;">
+            </div>
+            <div id="53">
+                <input name="in_006_65_B_L" type="text" style="display: none;" >
+                <input name="t54" type="text" style="display: none;">
+            </div>
+            <div id="54">
+                <input name="in_006_1_R_E" type="text" style="display: none;" >
+                <input name="t55" type="text" style="display: none;">
+            </div>
+            <div id="55">
+                <input name="in_004_396_R_E" type="text" style="display: none;" >
+                <input name="t56" type="text" style="display: none;">
+            </div>
+            <div id="56">
+                <input name="in_004_396_B_U" type="text" style="display: none;" >
+                <input name="t57" type="text" style="display: none;">
+            </div>
+            <div id="57">
+                <input name="in_003_300_R_L" type="text" style="display: none;" >
+                <input name="t58" type="text" style="display: none;">
+            </div>
+            <div id="58">
+                <input name="in_003_300_B_U" type="text" style="display: none;" >
+                <input name="t59" type="text" style="display: none;">
+            </div>
+            <div id="59">
+                <input name="in_002_151_R_L" type="text" style="display: none;" >
+                <input name="t60" type="text" style="display: none;">
+            </div>
+            <div id="60">
+                <input name="in_001_189_R_E" type="text" style="display: none;" >
+                <input name="t61" type="text" style="display: none;">
+            </div>
+            <button class="button" type="submit" id="submit-form">Submit</button>
+            <p id="wait" style="display: none; font-size: 20px;">It might take a few seconds...</p>
+        </form>
+        <p class="error" id="must">Please fill your first name</p>
+    </div>
+    <div style="display: none;" id="thanks">
+        <h1 id="thats">That's all!</h1>
+        <h2 id="thankU1">Thank you for participating in our experiment.</h2>
+        <h2 id="thankU2">Thanks to your participation we can continue to investigate, study and understand different visual functions.</h2>
+        <h2 id="thankU3">In addition we are hoping that this will assist in developing remote quantitative assessments of visual functions.</h2>
+        <h3 id="contact" style="position: relative; top: 25px;">You can contact us at:</h3><br>
+        <address>
+            <a href="mailto:yoavzilzan@gmail.com">Yoav Zilbertzan</a><br>
+            <a href="mailto:shagido@gmail.com">Sharon Gilaie-Dotan</a><br>
+            <a href="https://www.gilaie-dotan-lab.com/">www.gilaie-dotan-lab.com</a>
+        </address>
+    </div>
+    <div id="exp" style="display: none;">
+        <h1 id="expT">Which circle is closer?</h1>
+        <h1 id="howLeft" style="display: none;">There are images left</h1>
+        <h1 id="doYou" style="display: none;">Do you want to continue?</h1>
+        <div id="ethicsD" style="border:2px solid #555; border-radius: 4px;">
+            <input type="checkbox" id="ethics" name="ethics" value="agree">
+            <label id="etFor" for="ethics">
+                <span id="eFor">I agree that these data without any personal identifying details will be used for research purposes</span> <br>
+                <span id="eP2">And I understand that I can leave the experiment at any time that I choose.</span>
+            </label>
+        </div>
+        <br><h3 id="startE">To start the experiment press <b>Start</b></h3>
+        <div id="instE" style="display: inline;">
+            <p class="instE" style="color: red;">red circle closer: <span class = "rc">press R</span></p>
+            <p class="instE" style="color: blue;">blue circle closer: <span class = "bc">press B</span></p>
+            <p class="instE" style="color: purple;">circles equally distant: <span class = "e">press E</span></p>
+        </div>
+        <p id="loading" style="display: none;">Loading...</p>
+        <figure>
+            <img class="img" id="theImg" src="https://drive.google.com/uc?export=view&id=1p1U65Le16FUYPVAA9XFQynsv2E-szG-X" alt="road",
+            style="display: none;">
+            <figcaption style = text-align:center;></figcaption>
+        </figure>
+        <p id="nv" class="error">Not a valid key, try again</p>
+        <button type="button" class="button" id="start" onclick="start(false)">Start</button><br><br>
+        <p id="ethicsErr" class="error">Please check the agreement check box</p>
+        <div id="f" style="display: none;">
+            <button type="button" class="button" id="finish" onclick="finish()">Finish</button>
+        </div> 
+        <div id="c" style="display: none;">
+            <button type="button" class="button" id="cont" onclick="start(true)">Continue</button>
+        </div> 
+        <div id="PhoneB" style="display: none;">
+            <button class="button" id="lowE" type="button" onclick="lowB()" style="background-color: red; display: inline;">R</button>
+            <button class="button" id="upE" type="button" onclick="upB()" style="background-color: blue; display: inline;">B</button>
+            <button class="button" id="equalE" type="button" onclick="equalB()" style="background-color: purple; display: inline;">E</button>
+        </div>       
+    </div>
+    <script>
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        var device;
+        if(isMobile){
+            if(/iPhone/i.test(navigator.userAgent)){
+                device = "iPhone";
+            }
+            if(/iPad/i.test(navigator.userAgent)){
+                device = "iPad";
+            }
+            if(/iPod/i.test(navigator.userAgent)){
+                device = "iPod";
+            }
+            if(/Android/i.test(navigator.userAgent)){
+                device = "Android";
+            }
+        } else{
+            device = "Laptop";
+        }
+        document.getElementById("device").value = device;
+        if(isMobile){
+            var rcE = document.getElementsByClassName("rc");
+            for(var i = 0; i < rcE.length; i++){
+                rcE[i].innerHTML = "press the R button";
+            }
+            var bcE = document.getElementsByClassName("bc");
+            for(var i = 0; i < bcE.length; i++){
+                bcE[i].innerHTML = "press the B button";
+            }
+            var eE = document.getElementsByClassName("e");
+            for(var i = 0; i < eE.length; i++){
+                eE[i].innerHTML = "press the E button";
+            }
+        }
+        var widthW;
+        var heightW;
+        var widthI, heightI;
+        function wAndH(){
+            widthW = screen.availWidth;
+            heightW = screen.availHeight;
+            if(widthW<heightW){
+                widthI = 0.9 * widthW;
+                heightI =  widthW * 780 / 1280;
+            } else{
+                widthI = 0.5 * widthW;
+                heightI = heightW  * 780 / 1280;
+            }
+            var imgC = document.getElementsByClassName("img");
+            for(var i = 0; i < imgC.length; i++){
+                imgC[i].width = widthI;
+                imgC[i].height = heightI;
+            }
+            document.getElementById("nextInst").style.display = "inline";
+        }
+        window.addEventListener("orientationchange", function(){
+            wAndH();
+        },false);
+        
+        var en = document.getElementById("en"), he = document.getElementById("he"), lng = document.getElementById("lngL");
+        en.style.display = "inline";
+        en.style.position = "absolute";
+        en.style.top = lng.getBoundingClientRect().top + "px";
+        en.style.left = lng.getBoundingClientRect().right + "px";
+        he.style.display = "inline";
+        he.style.position = "absolute";
+        he.style.top = lng.getBoundingClientRect().top + "px";
+        he.style.left = lng.getBoundingClientRect().left - lng.getBoundingClientRect().width / 2 + "px";
+        function isOverlap(e1, e2){
+            return !(e1.getBoundingClientRect().right < e2.getBoundingClientRect().left ||
+            e1.getBoundingClientRect().left > e2.getBoundingClientRect().right ||
+            e1.getBoundingClientRect().bottom < e2.getBoundingClientRect().top ||
+            e1.getBoundingClientRect().top > e2.getBoundingClientRect().bottom)
+        }
+        function lowB(){
+            var t2 = document.getElementById("tryInst"), t1 = document.getElementById("tryT");
+            var imgT = document.getElementById("imgTry");
+            var eCor = document.getElementById("correct");
+            if(document.getElementById("tryExp").style.display === "block"){
+                document.getElementById("tryPhoneB").style.display = "none";
+                eCor.style.display = "inline";
+                eCor.style.position = "absolute";
+                eCor.style.top = imgT.getBoundingClientRect().bottom + "px";
+                eCor.style.left = widthW / 2 - eCor.getBoundingClientRect().width / 2 + "px";
+            } else{
+                keyExp(49, 0);
+            }
+        }
+        function upB(){
+            var t2 = document.getElementById("tryInst"), t1 = document.getElementById("tryT");
+            var imgT = document.getElementById("imgTry");
+            var eWro = document.getElementById("wrong");
+            if(document.getElementById("tryExp").style.display === "block"){
+                document.getElementById("tryPhoneB").style.display = "none";
+                eWro.style.display = "inline";
+                eWro.style.position = "absolute";
+                eWro.style.top = imgT.getBoundingClientRect().bottom + "px";
+                eWro.style.left = widthW / 2 - eWro.getBoundingClientRect().width / 2 + "px";
+            } else{
+                keyExp(50, 0);
+            }
+                
+        }
+        function equalB(){
+            var imgT = document.getElementById("imgTry");
+            var t2 = document.getElementById("tryInst"), t1 = document.getElementById("tryT");
+            var eWro = document.getElementById("wrong");
+            if(document.getElementById("tryExp").style.display === "block"){
+                document.getElementById("tryPhoneB").style.display = "none";
+                eWro.style.display = "inline";
+                eWro.style.position = "absolute";
+                eWro.style.top = imgT.getBoundingClientRect().bottom + "px";
+                eWro.style.left = widthW / 2 - eWro.getBoundingClientRect().width / 2 + "px";
+            } else{
+                keyExp(51, 0);
+            }
+            
+        }
+        function addExplanation(){
+            document.getElementById("explainVL").style.display = "block";
+            document.getElementById("explainV").style.display = "inline-block";
+            document.getElementById("explainV").style.width = widthW / 2 + "px";
+            if(isMobile){
+                document.getElementById("explainV").style.width = widthW * 8 / 10 + "px";
+            }
+        }
+        function removeExplanation(){
+            document.getElementById("explainVL").style.display = "none";
+            document.getElementById("explainV").style.display = "none";
+        }
+        function keyHandler(event){
+            var x = event.which || event.keyCode;
+            if(document.getElementById("tryExp").style.display === "block" && 
+            document.getElementById("wrong").style.display === "none" && 
+            document.getElementById("correct").style.display === "none"){
+                keyTrial(x);
+            }
+            if (document.getElementById("theImg").style.display === "block" && 
+            document.getElementById("doYou").style.display === "none") {
+                keyExp(x, false);
+            }
+        }
+        function again(){
+            document.getElementById("wrong").style.display = "none";
+            if(true){
+                tryE();
+            }
+        }
+        function ok(){
+            var ethicsD = document.getElementById("ethicsD"), expT = document.getElementById("expT");
+            document.getElementById("tryExp").style.display = "none";
+            document.getElementById("exp").style.display = "block";
+            document.getElementById("instE").style.display = "none";
+            document.getElementById("ethicsD").style.display = "inline-block";
+        }
+        function nextInst(){
+            document.getElementById("explain").style.display = "none"
+            document.getElementById("fInst").style.display = "block";
+            var corrTi = document.getElementById("corrTi"), corrImg = document.getElementById("corrImg"), wrongImg = document.getElementById("wrongImg"),
+            beforeTry = document.getElementById("beforeTry"), before = document.getElementById("before");
+            var widthL = corrImg.height * 0.5, heightL = corrImg.height * 0.5;
+            corrImg.width = widthL;
+            corrImg.height = heightL;
+            wrongImg.width = widthL;
+            wrongImg.height = heightL;
+            corrImg.style.display = "inline-block";
+            corrImg.style.position = "absolute";
+            corrImg.style.top = corrTi.getBoundingClientRect().bottom + corrImg.getBoundingClientRect().height / 8 + "px";
+            corrImg.style.left = widthW / 2 - widthL - widthW / 64  + "px";
+            wrongImg.style.display = "inline-block";
+            wrongImg.style.position = "absolute";
+            wrongImg.style.top = corrTi.getBoundingClientRect().bottom + corrImg.getBoundingClientRect().height / 8 + "px";
+            wrongImg.style.left = widthW / 2 + widthW / 64 + "px";
+            beforeTry.style.position = "absolute";
+            beforeTry.style.top = corrImg.getBoundingClientRect().bottom + corrImg.getBoundingClientRect().height / 10 + "px";
+            beforeTry.style.left = widthW / 2 - beforeTry.getBoundingClientRect().width / 2 + "px";
+            before.height = before.height * 0.7;
+        }
+        function tryE(){
+            document.getElementById("fInst").style.display = "none"
+            document.getElementById("tryExp").style.display = "block";
+            var t2 = document.getElementById("tryInst"), t1 = document.getElementById("tryT");
+            var imgT = document.getElementById("imgTry");
+            t1.style.display = "inline";
+            t2.style.display = "inline";
+            var mobBiasT = 0;
+            if(isMobile){
+                mobBiasT = t2.getBoundingClientRect().bottom - t1.getBoundingClientRect().bottom;
+            }
+            imgT.style.position = "absolute";
+            imgT.style.top = t1.getBoundingClientRect().bottom + mobBiasT + "px";
+            imgT.style.left = widthW / 2 - widthI / 2 + "px";
+            var low = document.getElementById("low"), equal = document.getElementById("equal"), up = document.getElementById("up");
+            //alert(t1.getBoundingClientRect().top.toString() + "  " + t2.getBoundingClientRect().top.toString() + "  " + imgT.getBoundingClientRect().top.toString());
+            if(true){
+                document.getElementById("tryPhoneB").style.display = "inline-block";
+                low.style.position = "absolute";
+                low.style.left = widthW / 2 - low.getBoundingClientRect().width / 2 - 100 + "px";
+                low.style.top = imgT.getBoundingClientRect().bottom + "px";
+                equal.style.position = "absolute";
+                equal.style.left = widthW / 2 - equal.getBoundingClientRect().width / 2 + "px";
+                equal.style.top = imgT.getBoundingClientRect().bottom + "px";
+                up.style.position = "absolute";
+                up.style.left =widthW / 2 - up.getBoundingClientRect().width / 2 + 100 + "px";
+                up.style.top = imgT.getBoundingClientRect().bottom + "px";
+            }
+        }
+        function finish(){
+            document.getElementById("exp").style.display = "none"
+            document.getElementById("details").style.display = "block";
+            document.getElementById("sW").value = screen.width.toString();
+            document.getElementById("sH").value = screen.height.toString();
+        }
+        function start(isContinue){
+            if(!document.getElementById("ethics").checked){
+                document.getElementById("ethicsErr").style.display = "inline";
+                return;
+            }
+            document.getElementById("ethicsErr").style.display = "none";
+            document.getElementById("ethicsD").style.display = "none";
+            var e2 = document.getElementById("instE"), e1 = document.getElementById("expT");
+            document.getElementById("start").style.display = "none";
+            document.getElementById("startE").style.display = "none";
+            document.getElementById("ethicsD").style.display = "none";
+            e1.style.display = "inline";
+            e2.style.display = "inline";
+            if(!isContinue){
+                var imgE = document.getElementById("theImg");
+                imgE.style.display = "block";
+                imgE.style.opacity = 0;
+                var mobBiasE = 0;
+                if(isMobile){
+                    mobBiasE = e2.getBoundingClientRect().bottom - e1.getBoundingClientRect().bottom;
+                }
+                imgE.style.position = "absolute";
+                imgE.style.top = e1.getBoundingClientRect().bottom + mobBiasE + "px";
+                imgE.style.left = widthW / 2 - widthI / 2 + "px";
+                //alert(e1.getBoundingClientRect().top.toString() + "  " + e2.getBoundingClientRect().top.toString() + "  " + imgE.getBoundingClientRect().top.toString());
+                var low = document.getElementById("lowE"), equal = document.getElementById("equalE"), up = document.getElementById("upE");
+                if(true){
+                    document.getElementById("PhoneB").style.display = "inline-block";
+                    low.style.position = "absolute";
+                    low.style.left = widthW / 2 - low.getBoundingClientRect().width / 2 - 100 + "px";
+                    low.style.top = imgE.getBoundingClientRect().bottom + "px";
+                    equal.style.position = "absolute";
+                    equal.style.left = widthW / 2 - equal.getBoundingClientRect().width / 2 + "px";
+                    equal.style.top = imgE.getBoundingClientRect().bottom + "px";
+                    up.style.position = "absolute";
+                    up.style.left = widthW / 2 - up.getBoundingClientRect().width / 2 + 100 + "px";
+                    up.style.top = imgE.getBoundingClientRect().bottom + "px";
+                }
+            }
+            keyExp(0, true);
+        }
+        function clearDetales(){
+            document.getElementById("details").style.display = "none";
+            document.getElementById("thanks").style.display = "block"
+        }
+    </script>
+    <script>
+        var imgScr = ["https://drive.google.com/uc?export=view&id=1B_-av8r2aU1XvTgJSm9Lr302-FY0gHH6" /*screens_004_46_R_L*/,
+                    "https://drive.google.com/uc?export=view&id=1sJap3WmKLJo9SXO_MfPzX1WCfjQ2qpTb" /*out_009_363_R_U*/,
+                    "https://drive.google.com/uc?export=view&id=1Y1PnPq_Ii2wTcTBIsiSL3FbGXW6DfjTT" /*out_010_1_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=109xOCwoRmv5Zde9Z7Y0CV_ryHcnyb1zo" /*out_003_1109_R_U*/,
+                    "https://drive.google.com/uc?export=view&id=1gO746jcKRB4y-do4rte39OE6ziZ5Vik5" /*in_004_133_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=1vl3XAuphOCIPPU4-5rB0xLd0bXTQrvol" /*out_007_248_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1MyGpGyP0Vqr-2xEqDF1NkRur6HQlzD8q" /*out_025_288_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1qpmGUD0-h3Q9G-dDkxTmI0NAZGZh8WH1" /*out_024_81_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=1TIQT6Tic5poFTEwJ0t1YzLEQaHWKCQGT" /*out_015_100_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1Pv6mzbOarmyTU7dx1Ci042cvByZYMbMw" /*out_014_209_R_U*/,
+                    "https://drive.google.com/uc?export=view&id=1uTCb_SnHDf03JJyEw2NN6Hb0vVxAlsZr" /*out_012_1_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1zJ71L9UbiGY9McLHBH8nlraGKBeTdbCk" /*out_011_651_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1TdTAHAisGui8nqz6fO2Z71CqI3HNLrBb" /*out_011_633_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1r0fVVtfJmUcExrbsHZRApvSL30iX2qGh" /*out_011_633_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1G9SdEvAMYeKH4H_p0u5Qfmcsnsm0ylj6" /*out_009_29_R_L*/,
+                    "https://drive.google.com/uc?export=view&id=1Cc6dY9f9yBezLdHT_GCJrDi84r-FkeU-" /*out_006_328_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1ZIjxbeZ43nYmhQk7KXGRK2nMGkPofOBH" /*out_006_207_R_U*/,
+                    "https://drive.google.com/uc?export=view&id=1VEgnZUBT9pYQdoxtdAr05cspO92pF3dS" /*out_006_148_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1_Ft1nouGbDMiuMQjsVOWQHLVeNLXOA9J" /*out_006_92_R_U*/,
+                    "https://drive.google.com/uc?export=view&id=18aFd9Fb5hdnHgyTsuaoXTvCPKCrxQpvY" /*out_006_89_R_U*/,
+                    "https://drive.google.com/uc?export=view&id=1H_2Q_K-RqETNkHHboy7Icp-2Jaj8Sf8f" /*out_006_63_B_E*/,
+                    "https://drive.google.com/uc?export=view&id=154xIhyjQ-iBEdU7S4OdVdQxO-tWgKLYY" /*out_006_1_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=1ulVdjICcwVI-vqjM9wCweUzzoLMyBASC" /*out_006_1_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1iC7NAjHSavT6z-qAVcIFwEc43lscSrj5" /*out_005_438_R_L*/,
+                    "https://drive.google.com/uc?export=view&id=1OYsc-GtM4PeAyCkjoQL-H_hpgp4JqCHu" /*out_005_365_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1mCgljWua34BIAuB3PkJepPhd5nFo2pw8" /*out_005_365_B_E*/,
+                    "https://drive.google.com/uc?export=view&id=1vlQY6eLQstc9DXmDEOlqR4ulzVAWixkn" /*out_005_219_R_U*/,
+                    "https://drive.google.com/uc?export=view&id=1RBsqmmCpqic0XlK4dcGUnxD_R37ym7fa" /*out_005_74_R_L*/,
+                    "https://drive.google.com/uc?export=view&id=1FDfiQF-LgpEh5uKk6t_kBm99MN3dVp1f" /*out_004_1282_R_U*/,
+                    "https://drive.google.com/uc?export=view&id=1V0osjWxWa9DpucGKaARWyT43VpHVDH5L" /*out_004_1094_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=1O8u5qtNEYa2EmC7lAH-SgbJDLmVRMcy3" /*out_004_1094_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1sc_GonEEC1aPovxoDoPWkUBwyia0WSli" /*out_004_809_R_L*/,
+                    "https://drive.google.com/uc?export=view&id=19ggX0TDwH44SMC7-0aZM7iFiekzwAbXy" /*out_004_809_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1LC5Jh7Z6yiPgh6z01rx9nPtH-sYi_QQD" /*out_004_809_B_E*/,
+                    "https://drive.google.com/uc?export=view&id=1GBdeIc0oT_vFHcP2181g-KVzYClEzV2K" /*out_004_144_B_E*/,
+                    "https://drive.google.com/uc?export=view&id=1SochTiReGee2dAiQ-jbHdkl_-3UmuDK7" /*out_003_1129_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=16FvWYs-Cakey9kk6oUhJlzXwQlhrTmjL" /*out_003_725_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1El2HAUsDLSNHxGtxKqDGKqUO2Zx2_XxG" /*out_003_690_R_L*/,
+                    "https://drive.google.com/uc?export=view&id=18eegALiYmR8L4cqhmuJnG8ULvXaKtX3m" /*out_002_705_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1QVCyOXUpgHgH1drsfQGbSTg92j733sj8" /*out_002_469_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1BokokTdW6zNpCy50xdMnPQnkA3CLETfw" /*out_001_769_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=14Z76uGPYQnBC3wQkCQWhiuC85WUswFzl" /*out_001_514_R_L*/,
+                    "https://drive.google.com/uc?export=view&id=169904xmcMJOt4uSiiKHCxUM8BBUQ6asl" /*out_001_285_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=1FqfV8Y1vq1pYUaDiy4G3KGGIouyA1VxE" /*in_023_315_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=1ZT7EFPBHJP9pw_ehWReZdX6enVYlSDge" /*in_023_226_B_E*/,
+                    "https://drive.google.com/uc?export=view&id=1PYg-qtZhHXJfUnE86Gvs0zeuERF8nNwm" /*in_023_46_R_L*/,
+                    "https://drive.google.com/uc?export=view&id=1alMsb9Ym1PWOP-me7lvpnvmD9SUjGUjd" /*in_012_917_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1gFQkedfKHv0C3hQqcapSU6OKHIrgD8SI" /*in_012_284_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1rl2hyaMcKCjEByRURKbYmMdIkeAcJhHn" /*in_012_77_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=1LQKSe3WXC0RK-qQKmOe0JEU2q8NkFNPq" /*in_008_282_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=1qibRCVCUSx6mGMCPcPh94JOMSbC3fEYM" /*in_007_1_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=1D57BgYZ23y8wA2yx844_FeX0iQN7z9ep" /*in_007_1_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1gOxmFxFTn-CKSJX7q8kQd2nrby157Jiy" /*in_006_172_B_E*/,
+                    "https://drive.google.com/uc?export=view&id=1gLMq5Xo79DKf5nxob2mo2T2xdgQeeLMN" /*in_006_65_B_L*/,
+                    "https://drive.google.com/uc?export=view&id=1wTZMN7RqKd_YEvR0htiLQ43DZvBNwcCw" /*in_006_1_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=13JX4k0UvM60E8BewCrm4bE08KucHddVH" /*in_004_396_R_E*/,
+                    "https://drive.google.com/uc?export=view&id=1PN0WvkRZxBTEaRO_uRIT5-HdfJO5Tq5R" /*in_004_396_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1_6f_JRPNQuT3AU56lwQc5sfDVJEow6X8" /*in_003_300_R_L*/,
+                    "https://drive.google.com/uc?export=view&id=15oa5n8ODqwmmi8h4ynZg928Hyf6KdGhw" /*in_003_300_B_U*/,
+                    "https://drive.google.com/uc?export=view&id=1iJAURXo3gyYVF9OkosTiLI0BrSmWKOa0" /*in_002_151_R_L*/,
+                    "https://drive.google.com/uc?export=view&id=11c9bPDIE4xppvyI9X-6ZkeaOejh-Aq7K" /*in_001_189_R_E*/];
+        document.getElementById("imNumT").innerHTML = "The following session includes a series of " + imgScr.length.toString() + " images";
+    </script>
+    <script>
+        function changeLng(){
+            var welcome = document.getElementById("welcome"), imNumT = document.getElementById("imNumT"),
+            each = document.getElementById("each"), r = document.getElementById("r"),
+            b = document.getElementById("b"), e = document.getElementById("e"), before = document.getElementById("before"),
+            tryB = document.getElementById("try"), tryT = document.getElementById("tryT"), hwrong = document.getElementById("hwrong"),
+            corr = document.getElementById("corr"), ok = document.getElementById("ok"), again = document.getElementById("again"),
+            expT = document.getElementById("expT"), startE = document.getElementById("startE"), start = document.getElementById("start"),
+            head = document.getElementById("head"), pd = document.getElementById("pd"), fnL = document.getElementById("fnL"),
+            lnL = document.getElementById("lnL"), ageL = document.getElementById("ageL"), gL = document.getElementById("gL"),
+            mL = document.getElementById("mL"), fL = document.getElementById("fL"), hL = document.getElementById("hL"),
+            rightL = document.getElementById("rightL"), leftL = document.getElementById("leftL"), submit = document.getElementById("submit-form"),
+            thats = document.getElementById("thats"), thankU1 = document.getElementById("thankU1"), contact = document.getElementById("contact"),
+            finish = document.getElementById("finish"), cont = document.getElementById("cont"), eFor = document.getElementById("eFor"),
+            eP2 = document.getElementById("eP2"), ethicsErr = document.getElementById("ethicsErr"), must = document.getElementById("must"),
+            thankU2 = document.getElementById("thankU2"), thankU3 = document.getElementById("thankU3"), wait = document.getElementById("wait"),
+            heightL = document.getElementById("heightL"), correctVL = document.getElementById("correctVL"), corrVL = document.getElementById("corrVL"),
+            incorrrVL = document.getElementById("incorrrVL"), explainVL = document.getElementById("explainVL"), fInstT = document.getElementById("fInstT"),
+            corrTi = document.getElementById("corrTi"), nextInst = document.getElementById("nextInst");
+            if(!document.getElementById("lng").checked){
+                welcome.innerHTML = "ברוכים/ות הבאים/ות לניסוי אומדן מרחקים"
+                each.innerHTML = "כל תמונה מכילה עיגול אדום ועיגול כחול"
+                r.innerHTML = "אם את/ה חושב/ת שהחלק בתמונה המסומן על ידי העיגול האדום קרוב יותר למצלמה: לחצ/י על הכפתור האדום"
+                b.innerHTML = "אם את/ה חושב/ת שהחלק בתמונה המסומן על ידי העיגול הכחול קרוב יותר למצלמה: לחצ/י על הכפתור הכחול"
+                e.innerHTML = "אם את/ה חושב/ת שהחלקים בתמונה המסומנים על ידי העיגולים מרוחקים באופן שווה מהמצלמה: לחצ/י על הכפתור הסגול"
+                before.innerHTML = "לפני שמתחילים בניסוי בוא/י ננסה את זה פעם אחת"
+                document.getElementById("imNumT").innerHTML = " הניסוי הבא מכיל " + imgScr.length.toString() + " תמונות ";
+                tryB.innerHTML = "התחל/י אימון"
+                tryT.innerHTML = "אימון"
+                document.getElementsByClassName("inst")[0].innerHTML = "עיגול אדום קרוב: לחצ/י אדום"
+                document.getElementsByClassName("inst")[1].innerHTML = "עיגול כחול קרוב: לחצ/י כחול"
+                document.getElementsByClassName("inst")[2].innerHTML = "עיגולים במרחק שווה: לחצ/י סגול"
+                document.getElementsByClassName("instE")[0].innerHTML = "עיגול אדום קרוב: לחצ/י אדום"
+                document.getElementsByClassName("instE")[1].innerHTML = "עיגול כחול קרוב: לחצ/י כחול"
+                document.getElementsByClassName("instE")[2].innerHTML = "עיגולים במרחק שווה: לחצ/י סגול"
+                hwrong.innerHTML = "טעות"
+                corr.innerHTML = "כל הכבוד"
+                again.innerHTML = "נסה/י שוב"
+                ok.innerHTML = "הבא"
+                expT.innerHTML = "?איזה עיגול קרוב יותר"
+                startE.innerHTML = "לתחילת הניסוי לחצ/י התחל"
+                start.innerHTML = "התחל/י"
+                head.innerHTML = "פרטים"
+                pd.innerHTML = "נא הכנס/י פרטים אישיים"
+                fnL.innerHTML = "שם פרטי"
+                lnL.innerHTML = "שם משפחה"
+                ageL.innerHTML = "גיל"
+                gL.innerHTML = "מגדר"
+                mL.innerHTML = "זכר"
+                fL.innerHTML = "נקבה"
+                hL.innerHTML = "יד דומיננטית"
+                rightL.innerHTML = "ימין"
+                leftL.innerHTML = "שמאל"
+                submit.innerHTML = "שלח/י"
+                thats.innerHTML = "!זה הכל"
+                thankU1.innerHTML = "תודה רבה על ההשתתפותך במחקר"
+                thankU2.innerHTML = "הודות להשתתפותך אנו יכולים להמשיך לחקור, ללמוד ולהבין תפקודי ראייה שונים"
+                thankU3.innerHTML = "בנוסף אנו מקווים שיתאפשר בעתיד לפתח הערכה כמותית של תפקודי ראייה מרחוק ללא צורך להגיע להבדק"
+                contact.innerHTML = ":צור/י איתנו קשר ב"
+                finish.innerHTML = "סיימ/י"
+                cont.innerHTML = "המשכ/י"
+                eFor.innerHTML = "אני מסכימ/ה שמידע זה ללא פרטים אישיים מזהים ישמש למטרות מחקר"
+                eP2.innerHTML = "וגם אני מבינ/ה שאני יכול/ה לעזוב את הניסוי מתי שאני בוחר/ת"
+                ethicsErr.innerHTML = "נא אשר/י את התנאים"
+                must.innerHTML = "נא למלא שם פרטי"
+                wait.innerHTML = "...זה עשוי לקחת כמה שניות"
+                heightL.innerHTML = "גובה(סמ)"
+                correctVL.innerHTML = "ראייתי מקרוב תקינה או מתוקנת על ידי משקפיים או עדשות"
+                incorrVL.innerHTML = "לא נכון"
+                corrVL.innerHTML = "נכון"
+                explainVL.innerHTML = "פרט/י"
+                fInstT.innerHTML = "הוראות נוספות"
+                corrTi.innerHTML = "בבקשה שימ/י לב שהמרחקים הם בין המצלמה ממנה צולמה התמונה ועד לעיגולים כפי שמוצג למטה, ולא המרחק האופקי בלבד"
+                nextInst.innerHTML = "המשכ/י"
+                if(true){
+                    fL.innerHTML = "זכר"
+                    mL.innerHTML = "נקבה"
+                    leftL.innerHTML = "ימין"
+                    rightL.innerHTML = "שמאל"
+                    corrVL.innerHTML = "לא נכון"
+                    incorrVL.innerHTML = "נכון"
+                }
+            } else {
+                welcome.innerHTML = "Welcome to the distance judgments session !"
+                each.innerHTML = "Each image contains a red circle and a blue circle."
+                r.innerHTML = "If you think the area marked by the red circle is closer to the camera: press the R button"
+                b.innerHTML = "If you think the area marked by the blue circle is closer to the camera: press the B button"
+                e.innerHTML = "If you think the areas marked by the circles are equally distant from the camera: press the E button"
+                before.innerHTML = "Before starting the experiment let's practice it once:"
+                document.getElementById("imNumT").innerHTML = "The following session includes a series of " + imgScr.length.toString() + " images";
+                tryB.innerHTML = "Practice Trial"
+                tryT.innerHTML = "Practice Trial"
+                document.getElementsByClassName("inst")[0].innerHTML = "red circle closer: press R"
+                document.getElementsByClassName("inst")[1].innerHTML = "blue circle closer: press B"
+                document.getElementsByClassName("inst")[2].innerHTML = "circles equally distant: press E"
+                document.getElementsByClassName("instE")[0].innerHTML = "red circle closer: press R"
+                document.getElementsByClassName("instE")[1].innerHTML = "blue circle closer: press B"
+                document.getElementsByClassName("instE")[2].innerHTML = "circles equally distant: press E"
+                hwrong.innerHTML = "Wrong"
+                corr.innerHTML = "Correct!"
+                again.innerHTML = "Try Again"
+                ok.innerHTML = "next"
+                expT.innerHTML = "Which circle is closer?"
+                startE.innerHTML = "To start the experiment press start"
+                start.innerHTML = "start"
+                head.innerHTML = "Details"
+                pd.innerHTML = "Please enter your personal details"
+                fnL.innerHTML = "First Name"
+                lnL.innerHTML = "Last Name"
+                ageL.innerHTML = "Age"
+                gL.innerHTML = "Gender"
+                mL.innerHTML = "Man"
+                fL.innerHTML = "Woman"
+                hL.innerHTML = "Handedness"
+                rightL.innerHTML = "Right"
+                leftL.innerHTML = "Left"
+                submit.innerHTML = "Submit"
+                thats.innerHTML = "That's all!"
+                thankU1.innerHTML = "Thank you for participating in our experiment."
+                thankU2.innerHTML = "Thanks to your participation we can continue to investigate, study and understand different visual functions. "
+                thankU3.innerHTML = "In addition we are hoping that this will assist in developing remote quantitative assessments of visual functions."
+                contact.innerHTML = "You can contact us at:"
+                finish.innerHTML = "Finish"
+                cont.innerHTML = "Continue"
+                eFor.innerHTML = "I agree that these data without any personal identifying details will be used for research purposes"
+                eP2.innerHTML = "And I understand that I can leave the experiment at any time that I choose"
+                ethicsErr.innerHTML = "Please check the agreement check box"
+                must.innerHTML = "Please fill your first name"
+                wait.innerHTML = "It might take a few seconds..."
+                heightL.innerHTML = "Height(cm)"
+                correctVL.innerHTML = "My near vision is normal or corrected by glasses or contacts"
+                corrVL.innerHTML = "Correct"
+                incorrVL.innerHTML = "Incorrect"
+                explainVL.innerHTML = "Explanation:"
+                fInstT.innerHTML = "Further Instructions"
+                corrTi.innerHTML = "Please note that distances is from the camera the picture was taken from to each of the circles as presented below, and not the horizontal distance:"
+                nextInst.innerHTML = "Next"
+            }
+        }
+        var i = 1;
+        var arr = [];
+        for(var j = 0; j < imgScr.length; j++){
+            arr[j] = j;
+        }
+        var lastPress;
+        var rand = -1;
+        function keyTrial(x){
+            var eCor = document.getElementById("correct"), eWro = document.getElementById("wrong"), eHwro = document.getElementById("hwrong"),
+            eOk = document.getElementById("ok"), eAg = document.getElementById("again"), imgT = document.getElementById("imgTry");
+            if(x == 49){
+                eCor.style.display = "inline";
+                eCor.style.position = "absolute";
+                eCor.style.top = imgT.getBoundingClientRect().bottom + "px";
+                eCor.style.left = widthW / 2 - eCor.getBoundingClientRect().width / 2 + "px";
+                
+            } else if(x == 50 || x == 51){
+                eHwro.innerHTML = "Wrong";
+                eWro.style.display = "inline";
+                eWro.style.position = "absolute";
+                eWro.style.top = imgT.getBoundingClientRect().bottom + "px";
+                eWro.style.left = widthW / 2 - eWro.getBoundingClientRect().width / 2 + "px";
+            } else{
+                eHwro.innerHTML = "Not a valid key";
+                eWro.style.display = "inline";
+                eWro.style.position = "absolute";
+                eWro.style.top = imgT.getBoundingClientRect().bottom + "px";
+                eWro.style.left = widthW / 2 - eWro.getBoundingClientRect().width / 2 + "px";
+            }
+        }
+        var batch = 15, left = batch;
+        
+        function keyExp(x, first){
+            var f = document.getElementById("f"), c = document.getElementById("c"), theImg = document.getElementById("theImg");
+            if(i % batch == 0 && arr.length != 0){
+                if(arr.length - 1 < batch){
+                    left = arr.length - 1;
+                }
+                theImg.style.opacity = "0.3";
+                document.getElementById("expT").style.display = "none";
+                document.getElementById("PhoneB").style.display = "none";
+                document.getElementById("instE").style.display = "none";
+                if(!document.getElementById("lng").checked){
+                    document.getElementById("howLeft").innerHTML = "נשארו עוד " + (arr.length - 1).toString() + " תמונות";
+                    document.getElementById("doYou").innerHTML = "?תרצה/י להמשיך ל " + left.toString() + " תמונות הבאות";
+                } else{
+                    document.getElementById("howLeft").innerHTML = "There are " + (arr.length - 1).toString() + " images left";
+                    document.getElementById("doYou").innerHTML = "Do you want to continue to the next " + left.toString() + " images?";
+                }
+                document.getElementById("howLeft").style.display = "block";
+                document.getElementById("doYou").style.display = "block";
+                f.style.display = "inline";
+                c.style.display = "inline";
+                f.style.position = "absolute";
+                c.style.position = "absolute";
+                f.style.top = theImg.getBoundingClientRect().bottom + "px";
+                f.style.left = widthW / 2 - f.getBoundingClientRect().width / 2 + 100 + "px"; 
+                c.style.top = theImg.getBoundingClientRect().bottom + "px";
+                c.style.left = widthW / 2 - c.getBoundingClientRect().width / 2 - 100 + "px"; 
+                x = x-48;
+                document.getElementById(arr[rand].toString()).children[0].value = x.toString();
+                timeTake = (Date.now() / 1000) - lastPress;
+                lastPress = (Date.now() / 1000);
+                document.getElementById(arr[rand].toString()).children[1].value = timeTake.toString();
+                arr.splice(rand, 1);
+                i++;
+            } else{
+                if(true){
+                    document.getElementById("PhoneB").style.display = "none";
+                }
+                var loading = document.getElementById("loading");
+                loading.style.display = "inline";
+                loading.style.position = "absolute";
+                loading.style.top = theImg.getBoundingClientRect().top + heightI / 2 + "px";
+                loading.style.left = widthW / 2 - loading.getBoundingClientRect().width / 2 + "px";
+                document.getElementById("expT").style.display = "inline";
+                document.getElementById("instE").style.display = "inline";
+                document.getElementById("howLeft").style.display = "none";
+                document.getElementById("doYou").style.display = "none";
+                f.style.display = "none";
+                c.style.display = "none";
+                var timeTake;
+                if((first) || x == 49 || x == 50 || x == 51){
+                    if(first){
+                        if(rand != -1){
+                            theImg.style.display = "none";
+                            document.getElementById("PhoneB").style.display = "none";
+                        }
+                        first = false;
+                        lastPress = (Date.now() / 1000);
+                    } else{
+                        theImg.style.display = "none";
+                        x = x-48;
+                        document.getElementById(arr[rand].toString()).children[0].value = x.toString();
+                        timeTake = (Date.now() / 1000) - lastPress;
+                        lastPress = (Date.now() / 1000);
+                        document.getElementById(arr[rand].toString()).children[1].value = timeTake.toString();
+                        arr.splice(rand, 1);
+                    }
+                    if(i < 6){
+                        rand = 1;
+                    } else {
+                        rand = Math.floor(Math.random() * arr.length);
+                    }
+                    theImg.src = imgScr[arr[rand]];
+                    if(arr.length != 0){
+                        theImg.onload = function() {
+                            loading.style.display = "none";
+                            theImg.style.display = 'block';
+                            theImg.style.opacity = "1";
+                            if(true){
+                                document.getElementById("PhoneB").style.display = "inline-block";
+                            }
+                        }
+                    }
+                    document.getElementById("nv").style.display = "none";
+                    if(arr.length == 0){
+                        theImg.style.display = "none";
+                        document.getElementById("PhoneB").style.display = "none";
+                        document.getElementById("instE").style.display = "none";
+                        loading.style.display = "none";
+                        f.style.display = "inline";
+                        f.style.top = heightW / 2 - f.getBoundingClientRect().height / 2 + "px";
+                        f.style.left = widthW / 2 - f.getBoundingClientRect().width / 2 + "px";
+                    }
+                    i++;
+                } else {
+                    var nv = document.getElementById("nv");
+                    nv.style.display = "inline";
+                    nv.style.position = "absolute";
+                    nv.style.top = theImg.getBoundingClientRect().bottom + "px";
+                    nv.style.left = widthW / 2 - nv.getBoundingClientRect().width / 2 + "px";
+                }
+            }
+        }
+    </script>
+
+    <script>src = 'https://code.jquery.com/jquery-3.5.1.min.js'</script>
+    <script>src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js';</script>
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxQtVFfZ9qNp1iojz_1o1DeLBvNEnozKOPT0iNqbImuMrWY6i8/exec'
+        const form = document.forms['submit-to-google-sheet']
+      
+        form.addEventListener('submit', e => {
+            var submit = document.getElementById("submit-form"), must = document.getElementById("must");
+            if(document.getElementById("fName").value.length == 0){
+                must.style.display = "inline";
+                must.style.position = "absolute";
+                must.style.top = submit.getBoundingClientRect().bottom + "px";
+                must.style.left = widthW / 2 - must.getBoundingClientRect().width / 2 + "px";
+                e.preventDefault();
+            } else{
+                document.getElementById("must").style.display = "none";
+                document.getElementById("submit-form").style.display = "none";
+                document.getElementById("wait").style.display = "block";
+
+                e.preventDefault()
+                fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                    .then(response => clearDetales())
+                    .catch(error => console.error('Error!', error.message))
+            }
+        })
+      </script>
+</body>
